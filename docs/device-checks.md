@@ -80,3 +80,28 @@ Found on the device and fixed in M2:
   `net_error -202`. The app now adds ISRG Root X1 to its own trust anchors (network security config).
 - WebView does not follow connectivity on its own: the app now calls `setNetworkAvailable` from a
   network callback, so the `online` event fires and widgets can recover.
+
+## M3
+
+Run on 2026-11-26 (Shield K1, Android 7.0) with a browser on a PC on the same Wi-Fi.
+
+1. [x] With LAN editing off, the PC cannot connect to `http://<tablet-ip>:8770/`.
+2. [x] Drawer, "Edit from another device": the screen shows the address and a 6-digit code.
+3. [x] From the PC (curl):
+   - `GET /api/layout` without a session → 401; `GET /editor/` → 302 to `/editor/pair.html`; the pairing page → 200.
+   - `POST /api/pair` without `X-Sidepanel: 1` → 403.
+   - Five wrong codes → the code on the device changes; the old code then → 401.
+   - Right code → 200 with a session cookie; `GET /api/layout` with it → 200.
+   - Same cookie with `Host: evil.example:8770` → 403; `PUT /api/preview` without `X-Sidepanel` → 403;
+     `PUT /api/layout` with `{"schema":2}` → 400.
+4. [x] In a browser: the pairing page, then the editor with the stored layout and the real widgets (including the
+   framed dashboard) at the device's aspect ratio.
+5. [x] Resize (grip) and move (drag) snap to the grid; selecting a widget shows its settings from the manifest.
+6. [x] "Preview on device": the device shows the edited page; `layout.json` is unchanged. "Discard preview": back to the saved layout.
+7. [x] A new empty page is refused in the browser ("page … has no widgets") before any request.
+8. [x] Adding a widget and "Save": `layout.json` on the device contains the change.
+9. [ ] LAN editing turns itself off after 15 idle minutes: see the M3 pull request.
+
+Notes:
+- While the app is being updated (`adb install -r`), Android shows the stock launcher until Home is pressed.
+- The night script turns the screen off from 00:00 to 08:00, which also applies while testing.
