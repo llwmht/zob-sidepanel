@@ -62,7 +62,8 @@ class PanelServerTest {
     @Test fun traversalIs404() {
         listOf("/../secret", "/panel/../../secret", "/%2e%2e/secret", "/panel/%2e%2e%2fsecret", "//etc/passwd")
             .forEach { assertEquals(it, 404, rawStatus(it)) }
-        assertFalse(asked.any { it.contains("..") })
+        // Every case must be rejected before the asset source is consulted at all.
+        assertTrue(asked.toString(), asked.isEmpty())
     }
 
     @Test fun postIs405() = assertEquals(405, get("/panel/", "POST").responseCode)

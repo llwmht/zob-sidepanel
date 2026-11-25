@@ -150,6 +150,8 @@ class PanelActivity : Activity() {
 
     override fun onDestroy() {
         handler.removeCallbacksAndMessages(null)
+        // An orderly destroy (recreate, config change) before the healthy mark is not a failed start.
+        app.startGuard.stopOrderly()
         webView?.destroy()
         webView = null
         super.onDestroy()

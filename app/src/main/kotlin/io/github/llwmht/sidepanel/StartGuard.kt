@@ -11,12 +11,27 @@ interface FlagStore {
  * catches them all. Safe mode stays until reset().
  */
 class StartGuard(private val store: FlagStore) {
+    /** True when the current start set the flag (a normal start), false in safe mode. */
+    private var ownsPending = false
 
     /** Returns true when this start must be in safe mode. */
     fun begin(): Boolean {
-        if (store.pending) return true
+        if (store.pending) {
+            ownsPending = false
+            return true
+        }
         store.pending = true
+        ownsPending = true
         return false
+    }
+
+    /**
+     * The activity is being destroyed in an orderly way (recreate, config change) before it was
+     * confirmed healthy. That is not a failed start; safe mode, if active, stays.
+     */
+    fun stopOrderly() {
+        if (ownsPending) store.pending = false
+        ownsPending = false
     }
 
     fun confirmHealthy() {

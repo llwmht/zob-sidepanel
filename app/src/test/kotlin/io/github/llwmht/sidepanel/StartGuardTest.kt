@@ -24,6 +24,16 @@ class StartGuardTest {
         assertTrue(guard.begin())
     }
 
+    @Test fun orderlyStopBeforeHealthyIsNotAFailure() {
+        guard.begin(); guard.stopOrderly()
+        assertFalse(guard.begin())
+    }
+
+    @Test fun orderlyStopKeepsSafeMode() {
+        guard.begin(); guard.begin(); guard.stopOrderly()
+        assertTrue(guard.begin())
+    }
+
     @Test fun resetLeavesSafeMode() {
         guard.begin(); guard.begin(); guard.reset()
         assertFalse(guard.begin())
