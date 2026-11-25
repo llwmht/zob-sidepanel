@@ -41,3 +41,4 @@ A message that is not JSON or has no `id` or `method` gets `{"id": null, "error"
 | `listApps` | – | `[{label: string, package: string}]`, sorted by label, this app excluded |
 | `launchApp` | `{package: string}` | boolean (false when the package has no launch intent) |
 | `openDrawer` | – | null |
+| `getLayout` | – | string (raw `layout.json` from app storage) or null when there is none |

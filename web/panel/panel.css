@@ -1,40 +1,62 @@
 html, body {
   margin: 0;
   height: 100%;
+  overflow: hidden;
   background: #000;
   color: #e8e8e8;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   user-select: none;
 }
 
-main {
-  height: 100%;
+#pages { position: fixed; inset: 0; }
+
+.page {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  gap: 1.2vmin;
+  padding: 1.2vmin;
+  box-sizing: border-box;
+  visibility: hidden;
+}
+.page.current { visibility: visible; }
+
+.cell {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 1.6vmin;
+}
+
+.cell-error {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1.5rem;
+  height: 100%;
+  padding: 1em;
+  box-sizing: border-box;
+  color: #ff9b8a;
+  background: #1a0f0d;
+  font-size: 2.2vmin;
+  text-align: center;
 }
 
-#clock {
-  font-size: 22vmin;
-  font-weight: 200;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
+/* Swipe catchers above everything, including web pages in frames. */
+.edge { position: fixed; top: 0; bottom: 0; width: 32px; z-index: 10; touch-action: none; }
+.edge.left { left: 0; }
+.edge.right { right: 0; }
+
+#banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  padding: 0.6em 1em;
+  background: #5a1d14;
+  color: #fff;
+  font-size: 2vmin;
 }
-
-#date { font-size: 4vmin; color: #9a9a9a; }
-#device { font-size: 2.5vmin; color: #6f6f6f; }
-
-.controls { display: flex; align-items: center; gap: 1.5rem; font-size: 2.5vmin; color: #9a9a9a; }
-.controls input { width: 30vmin; vertical-align: middle; }
-
-button {
-  font: inherit;
-  color: #e8e8e8;
-  background: #1c1c1c;
-  border: 1px solid #333;
-  border-radius: 999px;
-  padding: 0.6em 1.4em;
-}
-button:active { background: #2c2c2c; }
