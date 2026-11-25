@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pair with zob-sidepanel</title>
+  <link rel="stylesheet" href="editor.css">
+  <script type="module" src="pair.js"></script>
+</head>
+<body class="pair">
+  <form id="pair-form">
+    <h1>zob-sidepanel</h1>
+    <p>Enter the code shown on the device.</p>
+    <input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="\d{6}" required autofocus>
+    <button type="submit">Pair</button>
+    <p id="pair-error" class="error" hidden></p>
+  </form>
+</body>
+</html>
