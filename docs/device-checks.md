@@ -32,3 +32,25 @@ Run on 2026-11-25 (Shield K1, Android 7.0, WebView 101): all passed.
    the process is gone within about two seconds. Launch again: "The panel did not start properly last
    time, so it was skipped." "Try again": the panel loads and stays.
 10. [x] `adb logcat -d | Select-String sidepanel` shows no exception other than the one forced in check 9.
+
+## M1 — home app (Task 8)
+
+Run on 2026-11-25: all passed except where noted.
+
+- [x] Way back rehearsed first: `adb shell cmd package set-home-activity com.android.launcher3/.Launcher`
+  sets the stock launcher as home without the chooser (works on Android 7.0). Last resort:
+  `adb uninstall io.github.llwmht.sidepanel`.
+- [x] `adb shell cmd package set-home-activity io.github.llwmht.sidepanel/.PanelActivity`, then reboot:
+  the tablet boots into the panel (behind the swipe lock screen; see below).
+  Wait about 15 seconds before rebooting: the setting is written to disk with a delay, and an
+  immediate `adb reboot` loses it.
+- [x] Crash while default home (debug build: `adb shell am start -n io.github.llwmht.sidepanel/.PanelActivity --ez crash true`,
+  then Home): the panel comes back, no "choose a home app" dialog, the app is still the default home.
+- [x] `adb shell am force-stop io.github.llwmht.sidepanel`, then Home: the panel comes back.
+- [x] Charge limiter still running after reboot (`device/shield-k1/check.sh`).
+- [x] Back to stock launcher with the command above; Fully Kiosk re-enabled.
+
+Findings to handle later:
+- The swipe lock screen shows over the panel after boot (Fully Kiosk used to dismiss it). Planned for M4.
+- A package disabled with `pm disable-user` and enabled again stays in the "stopped" state and gets no
+  boot broadcast until it is opened once by hand.

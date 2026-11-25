@@ -13,6 +13,26 @@ small agent on your PC for hardware stats and macro buttons.
 - Widgets are plain HTML and JavaScript.
 - Layouts are edited from a browser on another device.
 
+## Try it (developers)
+
+Needs JDK 17+ and the Android SDK. Build and install the debug APK on a device with USB debugging:
+
+```powershell
+.\gradlew :app:assembleDebug
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+```
+
+Make it the home app, and go back to the stock launcher:
+
+```powershell
+adb shell cmd package set-home-activity io.github.llwmht.sidepanel/.PanelActivity
+adb shell cmd package set-home-activity com.android.launcher3/.Launcher
+```
+
+The second command uses the stock launcher of the reference device; use your launcher's component
+(`adb shell cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.HOME`).
+On the device: Settings, Apps, gear icon, Home app. Uninstalling the app also restores the previous home.
+
 ## Credits
 
 Inspired by [phonebox](https://github.com/ersinkoc/phonebox) by Ersin Koç (MIT license), which turns

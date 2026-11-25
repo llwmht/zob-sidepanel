@@ -60,9 +60,18 @@ class PanelActivity : Activity() {
         webView = view
         setContentView(view)
         view.loadUrl(server.baseUrl + "/panel/")
+        maybeCrashForTest(intent)
+    }
 
-        if (BuildConfig.DEBUG && intent.getBooleanExtra("crash", false)) {
-            // Test hook for the crash path (docs/device-checks.md, M1 check 9).
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        // As the home app the activity is usually already running, so the test hook must work here too.
+        maybeCrashForTest(intent)
+    }
+
+    /** Test hook for the crash path (docs/device-checks.md, M1 check 9). Debug builds only. */
+    private fun maybeCrashForTest(intent: Intent?) {
+        if (BuildConfig.DEBUG && intent?.getBooleanExtra("crash", false) == true) {
             handler.postDelayed({ throw RuntimeException("debug crash requested") }, 2000)
         }
     }
