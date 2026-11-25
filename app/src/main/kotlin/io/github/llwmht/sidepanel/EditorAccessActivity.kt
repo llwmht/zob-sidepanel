@@ -71,7 +71,11 @@ class EditorAccessActivity : Activity() {
     private val refresh = object : Runnable {
         override fun run() {
             codeView.text = app.pairing.currentCode() ?: "------"
-            if (!app.lanEnabled) stateView.text = "Editing is off."
+            stateView.text = when {
+                !app.lanEnabled -> "Editing is off."
+                app.pairing.isLocked() -> "Pairing locked after ${Pairing.MAX_WRONG} wrong codes. Close and reopen this screen for a new code."
+                else -> stateView.text
+            }
             handler.postDelayed(this, 1000)
         }
     }

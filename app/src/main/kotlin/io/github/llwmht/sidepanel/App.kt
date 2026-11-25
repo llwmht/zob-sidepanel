@@ -72,21 +72,30 @@ class App : Application() {
             host = if (lanEnabled) "0.0.0.0" else "127.0.0.1",
             api = editorApi,
             access = { r ->
-                if (r.remoteIp != "127.0.0.1") lastLanRequest = SystemClock.elapsedRealtime()
-                AccessPolicy.decide(r, lanEnabled, pairing::isValid)
+                val decision = AccessPolicy.decide(r, lanEnabled, pairing::isValid)
+                // Only a paired browser's activity keeps editing on; guesses and refused requests must not.
+                if (decision == null && r.remoteIp != "127.0.0.1" && pairing.isValid(AccessPolicy.sessionToken(r.cookie))) {
+                    lastLanRequest = SystemClock.elapsedRealtime()
+                }
+                decision
             },
         )
         server = s
         return s.startOrError()
     }
 
-    /** Opens the server to the local network and shows a new pairing code. */
+    /**
+     * Opens the server to the local network. Called each time the editing screen opens: a new pairing code
+     * is made only when there is none (first time, or after pairing locked on wrong guesses), and the server
+     * restarts only when it was not already open, so editors in progress are not cut off.
+     */
     fun enableLan(): String? {
-        lanEnabled = true
-        pairing.newCode()
+        if (pairing.currentCode() == null) pairing.newCode()
         lastLanRequest = SystemClock.elapsedRealtime()
         main.removeCallbacks(idleCheck)
         main.postDelayed(idleCheck, IDLE_CHECK_MS)
+        if (lanEnabled) return null
+        lanEnabled = true
         return startServer()
     }
 

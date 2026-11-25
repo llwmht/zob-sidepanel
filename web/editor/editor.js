@@ -88,13 +88,15 @@ function wireDrag(el, id, resizing) {
         if (target) place(target, next);
       }
     };
+    // A drag ends on release, and also when the pointer is lost (window switch, cancelled touch).
+    const ends = ['pointerup', 'pointercancel', 'lostpointercapture'];
     const onUp = () => {
       el.removeEventListener('pointermove', onMove);
-      el.removeEventListener('pointerup', onUp);
+      for (const t of ends) el.removeEventListener(t, onUp);
       drawOverlay();
     };
     el.addEventListener('pointermove', onMove);
-    el.addEventListener('pointerup', onUp);
+    for (const t of ends) el.addEventListener(t, onUp);
   });
 }
 

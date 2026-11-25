@@ -11,9 +11,21 @@ class AccessPolicyTest {
         path: String = "/editor/index.html", cookie: String? = "sp_session=good", x: String? = null,
     ) = AccessPolicy.Request(ip, host, method, path, cookie, x)
 
-    @Test fun loopbackAlwaysAllowed() {
-        assertNull(AccessPolicy.decide(req(ip = "127.0.0.1", host = "127.0.0.1:8770", cookie = null), false, valid))
-        assertNull(AccessPolicy.decide(req(ip = "127.0.0.1", method = "PUT", cookie = null), true, valid))
+    @Test fun loopbackPanelFilesAllowed() {
+        assertNull(AccessPolicy.decide(req(ip = "127.0.0.1", host = "127.0.0.1:8770", path = "/panel/", cookie = null), false, valid))
+        assertNull(AccessPolicy.decide(req(ip = "127.0.0.1", host = "127.0.0.1:8770", path = "/widgets/clock/widget.js", cookie = null), true, valid))
+    }
+
+    @Test fun loopbackWithAnotherHostIsRefused() {
+        // DNS rebinding from a page on the device (browser or a framed web-page widget).
+        assertEquals(403, AccessPolicy.decide(req(ip = "127.0.0.1", host = "evil.example:8770", path = "/panel/", cookie = null), false, valid))
+        assertEquals(403, AccessPolicy.decide(req(ip = "127.0.0.1", host = null, path = "/panel/", cookie = null), false, valid))
+    }
+
+    @Test fun loopbackNeverReachesTheApi() {
+        // The panel uses the bridge, never /api/; other apps on the device must not read or change the layout.
+        assertEquals(403, AccessPolicy.decide(req(ip = "127.0.0.1", host = "127.0.0.1:8770", path = "/api/layout", cookie = null), true, valid))
+        assertEquals(403, AccessPolicy.decide(req(ip = "127.0.0.1", host = "127.0.0.1:8770", method = "PUT", path = "/api/preview", cookie = "sp_session=good", x = "1"), true, valid))
     }
 
     @Test fun remoteRefusedWhenLanOff() = assertEquals(403, AccessPolicy.decide(req(), false, valid))
