@@ -40,7 +40,8 @@ The panel shows pages of widgets on a 12 x 8 grid, described by a JSON layout (f
 Edit it from a browser on the same Wi-Fi: on the device, press Back to open the app drawer, then
 **Edit from another device**. Open the address it shows on your computer and enter the code. The editor
 shows your pages with the real widgets; drag to move, drag the corner to resize, select a widget to change
-its settings, then **Preview on device** or **Save**. Editing turns itself off after 15 idle minutes.
+its settings, then **Preview on device** or **Save**. Editing turns itself off after 15 idle minutes;
+a paired browser stays paired for 30 days. Five wrong codes lock pairing until you reopen the screen.
 
 Plain HTTP is used on the local network, so only edit on a network you trust.
 

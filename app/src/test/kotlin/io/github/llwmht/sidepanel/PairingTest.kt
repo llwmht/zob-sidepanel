@@ -9,6 +9,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.Random
 
+private const val DAY = 24L * 60 * 60 * 1000
+
 class PairingTest {
     private val rnd = Random(42)
     private val store = object : TokenStore {
@@ -25,7 +27,7 @@ class PairingTest {
         assertNotNull(token)
         assertTrue(Regex("""[0-9a-f]{64}""").matches(token!!))
         assertTrue(pairing.isValid(token))
-        assertEquals(setOf(token), store.saved)
+        assertEquals(1, store.saved.size)
     }
 
     @Test fun wrongCodeGivesNothing() {
@@ -66,6 +68,27 @@ class PairingTest {
         pairing.forgetAll()
         assertFalse(pairing.isValid(token))
         assertTrue(store.saved.isEmpty())
+    }
+
+    @Test fun sessionsExpireAfterThirtyDays() {
+        var now = 1_000_000L
+        val p = Pairing({ n -> ByteArray(n).also { rnd.nextBytes(it) } }, store, now = { now })
+        val token = p.tryPair(p.newCode())
+        now += 29L * DAY
+        assertTrue(p.isValid(token))
+        now += 2L * DAY
+        assertFalse(p.isValid(token))
+    }
+
+    @Test fun expiredSessionsAreDroppedFromStorage() {
+        var now = 0L
+        val p = Pairing({ n -> ByteArray(n).also { rnd.nextBytes(it) } }, store, now = { now })
+        val old = p.tryPair(p.newCode())!!
+        now += 31L * DAY
+        val fresh = p.tryPair(p.currentCode()!!)!!
+        assertEquals(1, store.saved.size)
+        assertTrue(store.saved.single().startsWith(fresh))
+        assertFalse(store.saved.single().startsWith(old))
     }
 
     @Test fun nullOrUnknownTokenIsInvalid() {
