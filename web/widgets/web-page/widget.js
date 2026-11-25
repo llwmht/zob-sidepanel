@@ -18,7 +18,11 @@ export function mount(cell, ctx) {
   frame.style.cssText = 'border:0;width:100%;height:100%;display:block;background:#000';
   cell.appendChild(frame);
 
+  const reload = () => { frame.src = url; };
   const minutes = Number(ctx.settings.reloadMinutes) || 0;
-  const timer = minutes > 0 ? setInterval(() => { frame.src = url; }, minutes * 60000) : null;
-  return () => { if (timer) clearInterval(timer); };
+  const timer = minutes > 0 ? setInterval(reload, minutes * 60000) : null;
+  // A load that failed while offline leaves an error page in the frame: reload when the network is back.
+  const onOnline = () => setTimeout(reload, 5000); // give DNS and routes a moment
+  window.addEventListener('online', onOnline);
+  return () => { if (timer) clearInterval(timer); window.removeEventListener('online', onOnline); };
 }
