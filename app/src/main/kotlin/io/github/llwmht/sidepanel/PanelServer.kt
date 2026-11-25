@@ -26,7 +26,13 @@ class PanelServer(
         val uri = session.uri ?: "/"
         val h = session.headers
         val request = AccessPolicy.Request(session.remoteIpAddress, h["host"], session.method.name, uri, h["cookie"], h["x-sidepanel"])
-        access(request)?.let { return text(it, "access denied") }
+        access(request)?.let { code ->
+            // An unpaired browser opening the editor is sent to the pairing page instead of a bare 401.
+            if (code == 401 && session.method == Method.GET && uri.startsWith("/editor/")) {
+                return text(302, "").apply { addHeader("Location", "/editor/pair.html") }
+            }
+            return text(code, "access denied")
+        }
 
         if (uri.startsWith("/api/")) return serveApi(session, uri)
         if (session.method != Method.GET) return text(405, "method not allowed")
