@@ -95,6 +95,7 @@ class PanelActivity : Activity() {
         // cookies, sites that keep a session in a cookie would log out (they work top-level in a browser).
         CookieManager.getInstance().setAcceptThirdPartyCookies(view, true)
         val dispatcher = BridgeDispatcher(deviceHandlers(this))
+        app.onPanelReload = { handler.post { webView?.reload() } }
         WebViewCompat.addWebMessageListener(view, "sidepanelNative", setOf(server.baseUrl)) { _, message, _, _, reply ->
             reply.postMessage(dispatcher.handle(message.data))
         }
@@ -193,6 +194,7 @@ class PanelActivity : Activity() {
         handler.removeCallbacksAndMessages(null)
         // An orderly destroy (recreate, config change) before the healthy mark is not a failed start.
         app.startGuard.stopOrderly()
+        app.onPanelReload = null
         networkCallback?.let { getSystemService(ConnectivityManager::class.java)?.unregisterNetworkCallback(it) }
         networkCallback = null
         webView?.destroy()

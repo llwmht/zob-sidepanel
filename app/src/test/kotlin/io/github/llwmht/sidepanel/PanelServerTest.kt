@@ -73,6 +73,46 @@ class PanelServerTest {
         assertNotNull(second.startOrError())
     }
 
+    private fun send(method: String, path: String, body: String?): Int {
+        val c = get(path, method)
+        if (body != null) {
+            c.doOutput = true
+            c.outputStream.use { it.write(body.toByteArray()) }
+        }
+        return c.responseCode
+    }
+
+    @Test fun apiRoutesGoToTheApiWithTheBody() {
+        server.stop()
+        val seen = mutableListOf<String>()
+        server = PanelServer(source, 0, api = Api { m, p, b, _ -> seen += "$m $p $b"; ApiResponse(204) })
+        server.startOrError()
+        assertEquals(204, send("PUT", "/api/layout", "{\"a\":1}"))
+        assertEquals(listOf("PUT /api/layout {\"a\":1}"), seen)
+    }
+
+    @Test fun bodyOverOneMegabyteIs413() {
+        server.stop()
+        server = PanelServer(source, 0, api = Api { _, _, _, _ -> ApiResponse(204) })
+        server.startOrError()
+        // Raw request: the server answers from the Content-Length header without reading the body.
+        val status = Socket("127.0.0.1", server.listeningPort).use { s ->
+            s.getOutputStream().write("PUT /api/layout HTTP/1.1\r\nHost: x\r\nContent-Length: ${1024 * 1024 + 1}\r\n\r\n".toByteArray())
+            s.getInputStream().bufferedReader().readLine().split(" ")[1].toInt()
+        }
+        assertEquals(413, status)
+    }
+
+    @Test fun deniedRequestsServeNothing() {
+        server.stop()
+        server = PanelServer(source, 0, access = { 403 })
+        server.startOrError()
+        assertEquals(403, get("/panel/").responseCode)
+        assertTrue(asked.isEmpty())
+    }
+
+    @Test fun apiWithoutHandlerIs404() = assertEquals(404, get("/api/layout").responseCode)
+
     @Test fun panelUrlMatchesOnlyExactOrigin() {
         assertTrue(isPanelUrl("http://127.0.0.1:8770/panel/", 8770))
         listOf(
