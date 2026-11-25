@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.net.ConnectivityManager
+import android.net.Network
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -28,6 +30,7 @@ class PanelActivity : Activity() {
     private val app get() = application as App
     private val handler = Handler(Looper.getMainLooper())
     private var webView: WebView? = null
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
 
     /** Chromium major version of the system WebView, 0 when unknown. Read by the `info` bridge method. */
     var webviewMajor = 0
@@ -59,6 +62,7 @@ class PanelActivity : Activity() {
         }
         setUpWebView(view, server)
         webView = view
+        watchNetwork()
         setContentView(view)
         view.loadUrl(server.baseUrl + "/panel/")
         maybeCrashForTest(intent)
@@ -102,6 +106,20 @@ class PanelActivity : Activity() {
                 if (isPanelUrl(url, port)) handler.postDelayed({ app.startGuard.confirmHealthy() }, HEALTHY_AFTER_MS)
             }
         }
+    }
+
+    /**
+     * WebView does not follow connectivity by itself: without this, navigator.onLine never changes and
+     * the `online` event never fires, so widgets cannot recover after the network comes back.
+     */
+    private fun watchNetwork() {
+        val cm = getSystemService(ConnectivityManager::class.java) ?: return
+        val callback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) { handler.post { webView?.setNetworkAvailable(true) } }
+            override fun onLost(network: Network) { handler.post { webView?.setNetworkAvailable(false) } }
+        }
+        cm.registerDefaultNetworkCallback(callback)
+        networkCallback = callback
     }
 
     private fun showFallback(reason: String, detail: String?) {
@@ -156,6 +174,8 @@ class PanelActivity : Activity() {
         handler.removeCallbacksAndMessages(null)
         // An orderly destroy (recreate, config change) before the healthy mark is not a failed start.
         app.startGuard.stopOrderly()
+        networkCallback?.let { getSystemService(ConnectivityManager::class.java)?.unregisterNetworkCallback(it) }
+        networkCallback = null
         webView?.destroy()
         webView = null
         super.onDestroy()

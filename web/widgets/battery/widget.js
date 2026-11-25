@@ -7,6 +7,7 @@ export function mount(cell, ctx) {
   root.className = 'w';
   const line = document.createElement('div');
   line.style.fontSize = '0.4em';
+  line.style.whiteSpace = 'nowrap';
   root.appendChild(line);
   cell.appendChild(root);
 
@@ -22,6 +23,6 @@ export function mount(cell, ctx) {
   };
   refresh();
   const timer = setInterval(refresh, REFRESH_MS);
-  const unfit = fitText(cell, root, 0.5);
+  const unfit = fitText(cell, root, 0.22);
   return () => { clearInterval(timer); unfit(); };
 }
