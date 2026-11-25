@@ -37,7 +37,14 @@ On the device: Settings, Apps, gear icon, Home app. Uninstalling the app also re
 
 The panel shows pages of widgets on a 12 x 8 grid, described by a JSON layout (format in
 [docs/PLAN.md](docs/PLAN.md), section 5, and the default in `web/panel/default-layout.json`).
-Until the browser editor arrives, push a layout file to a debug build with:
+Edit it from a browser on the same Wi-Fi: on the device, press Back to open the app drawer, then
+**Edit from another device**. Open the address it shows on your computer and enter the code. The editor
+shows your pages with the real widgets; drag to move, drag the corner to resize, select a widget to change
+its settings, then **Preview on device** or **Save**. Editing turns itself off after 15 idle minutes.
+
+Plain HTTP is used on the local network, so only edit on a network you trust.
+
+For scripted setups, a layout file can also be pushed to a debug build:
 
 ```powershell
 .\device\push-layout.ps1 path\to\layout.json
