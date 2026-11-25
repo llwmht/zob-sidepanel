@@ -1,0 +1,9 @@
+{
+  "name": "Weather",
+  "defaultSize": { "w": 4, "h": 5 },
+  "settings": {
+    "label": { "type": "string", "default": "", "label": "Place name" },
+    "latitude": { "type": "number", "default": null, "label": "Latitude" },
+    "longitude": { "type": "number", "default": null, "label": "Longitude" }
+  }
+}
