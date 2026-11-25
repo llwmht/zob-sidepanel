@@ -33,6 +33,19 @@ The second command uses the stock launcher of the reference device; use your lau
 (`adb shell cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.HOME`).
 On the device: Settings, Apps, gear icon, Home app. Uninstalling the app also restores the previous home.
 
+## Layouts
+
+The panel shows pages of widgets on a 12 x 8 grid, described by a JSON layout (format in
+[docs/PLAN.md](docs/PLAN.md), section 5, and the default in `web/panel/default-layout.json`).
+Until the browser editor arrives, push a layout file to a debug build with:
+
+```powershell
+.\device\push-layout.ps1 path\to\layout.json
+```
+
+Built-in widgets: `clock`, `battery`, `weather` (Open-Meteo, set `latitude`/`longitude`),
+`web-page` (any page that allows being framed).
+
 ## Credits
 
 Inspired by [phonebox](https://github.com/ersinkoc/phonebox) by Ersin Koç (MIT license), which turns
