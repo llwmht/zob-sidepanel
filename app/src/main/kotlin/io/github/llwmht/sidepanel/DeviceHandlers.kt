@@ -46,5 +46,5 @@ fun deviceHandlers(a: PanelActivity): Map<String, (JSONObject) -> Any?> = mapOf(
         if (intent == null) false else { a.startActivity(intent); true }
     },
     "openDrawer" to { _ -> a.openDrawer(); null },
-    "getLayout" to { _ -> LayoutStore(a.filesDir).read() },
+    "getLayout" to { _ -> (a.application as App).editorApi.currentLayout() },
 )
