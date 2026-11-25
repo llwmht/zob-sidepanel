@@ -23,6 +23,7 @@ android {
 
 dependencies {
     implementation(libs.nanohttpd)
+    implementation(libs.androidx.webkit)
     testImplementation(libs.junit)
     testImplementation(libs.json)
 }
