@@ -92,6 +92,8 @@ async function start() {
   });
   show(pageEls, rotation.current());
   document.addEventListener('pointerdown', () => rotation.touch());
+  // Sent by the app for every touch, including touches inside framed pages that the panel cannot see.
+  window.addEventListener('sidepanel:touch', () => rotation.touch());
   wireSwipes(rotation, pageEls);
   setInterval(() => { if (rotation.tick()) show(pageEls, rotation.current()); }, 1000);
 }
