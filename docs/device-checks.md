@@ -100,7 +100,14 @@ Run on 2026-11-26 (Shield K1, Android 7.0) with a browser on a PC on the same Wi
 6. [x] "Preview on device": the device shows the edited page; `layout.json` is unchanged. "Discard preview": back to the saved layout.
 7. [x] A new empty page is refused in the browser ("page … has no widgets") before any request.
 8. [x] Adding a widget and "Save": `layout.json` on the device contains the change.
-9. [ ] LAN editing turns itself off after 15 idle minutes: see the M3 pull request.
+9. [x] LAN editing turns itself off after 15 idle minutes (pairing page unreachable 16 minutes after the last use).
+10. [x] After the review fixes: through `adb forward` (requests arrive as loopback), `/panel/` with Host
+    `127.0.0.1:8770` → 200, with Host `evil.example:8770` → 403, `GET /api/layout` and `PUT /api/preview` → 403.
+11. [x] A 1000-byte `POST /api/pair` → 413. Five wrong codes: the screen shows `------` and "Pairing locked …",
+    the old right code → 401; reopening the screen shows a new code.
+12. [x] Sessions stored before the 30-day expiry (no date) are refused and dropped; pairing again stores `<token>:<date>`.
+13. [x] "Stop editing": the device no longer answers on the network.
+14. [x] Memory over 30 minutes (screen off by the night script): total PSS 77 MB → 104 MB.
 
 Notes:
 - While the app is being updated (`adb install -r`), Android shows the stock launcher until Home is pressed.
