@@ -12,6 +12,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.webkit.CookieManager
@@ -98,7 +99,7 @@ class PanelActivity : Activity() {
             reply.postMessage(dispatcher.handle(message.data))
         }
         view.webViewClient = object : WebViewClient() {
-            // M1 has no external links: anything outside the panel origin is blocked, nothing is handed to other apps.
+            // The panel never navigates away: anything outside its origin is blocked, nothing is handed to other apps.
             override fun shouldOverrideUrlLoading(v: WebView, request: WebResourceRequest) =
                 !isPanelUrl(request.url.toString(), port)
 
@@ -118,8 +119,15 @@ class PanelActivity : Activity() {
             override fun onAvailable(network: Network) { handler.post { webView?.setNetworkAvailable(true) } }
             override fun onLost(network: Network) { handler.post { webView?.setNetworkAvailable(false) } }
         }
-        cm.registerDefaultNetworkCallback(callback)
-        networkCallback = callback
+        // Started offline: tell WebView now, otherwise it assumes online and `online` never fires later.
+        if (cm.activeNetwork == null) webView?.setNetworkAvailable(false)
+        try {
+            cm.registerDefaultNetworkCallback(callback)
+            networkCallback = callback
+        } catch (e: RuntimeException) {
+            // A home app must not crash at start over this; widgets then only recover on their own timers.
+            Log.w(App.TAG, "network callback unavailable", e)
+        }
     }
 
     private fun showFallback(reason: String, detail: String?) {
@@ -150,6 +158,17 @@ class PanelActivity : Activity() {
                 setOnClickListener { app.startGuard.reset(); recreate() }
             })
         })
+    }
+
+    /**
+     * Touches inside a framed web page never reach the panel's own listeners, so the activity reports
+     * every touch to the panel; it uses this to pause page rotation.
+     */
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.actionMasked == MotionEvent.ACTION_DOWN) {
+            webView?.evaluateJavascript("window.dispatchEvent(new Event('sidepanel:touch'))", null)
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     fun openDrawer() {

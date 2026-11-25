@@ -27,11 +27,17 @@ export function parseLayout(text) {
   if (doc.schema !== 1) return fail('unsupported layout schema: ' + doc.schema);
   if (!Array.isArray(doc.pages) || doc.pages.length === 0) return fail('layout has no pages');
 
-  const rotation = Object.assign({ enabled: true, pauseAfterTouch: 60 }, doc.rotation);
+  const r = doc.rotation && typeof doc.rotation === 'object' ? doc.rotation : {};
+  const pause = r.pauseAfterTouch;
+  const rotation = Object.assign({}, r, {
+    enabled: r.enabled !== false,
+    pauseAfterTouch: typeof pause === 'number' && isFinite(pause) && pause >= 0 ? pause : 60,
+  });
   const pages = [];
   for (const page of doc.pages) {
     if (!page || typeof page !== 'object') return fail('a page is not an object');
-    const widgets = Array.isArray(page.widgets) ? page.widgets : [];
+    const widgets = page.widgets;
+    if (!Array.isArray(widgets) || widgets.length === 0) return fail('page ' + (page.id || '(no id)') + ' has no widgets');
     const seen = new Set();
     for (const w of widgets) {
       const problem = checkWidget(w);

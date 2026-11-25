@@ -59,8 +59,25 @@ test('duplicate widget ids in a page are rejected', () => {
   assert.match(error, /duplicate/);
 });
 
+test('a page without widgets is rejected', () => {
+  assert.match(parseLayout(doc([{}])).error, /no widgets/);
+  assert.match(parseLayout(doc([{ id: 'p1', widgets: {} }])).error, /p1 has no widgets/);
+  assert.match(parseLayout(doc([{ id: 'p1', widgets: [] }])).error, /p1 has no widgets/);
+});
+
+test('rotation settings are checked', () => {
+  const page = [{ id: 'p1', widgets: [widget()] }];
+  const rot = (rotation) => parseLayout(JSON.stringify({ schema: 1, rotation, pages: page })).layout.rotation;
+  assert.deepEqual(rot({ pauseAfterTouch: 'x' }), { enabled: true, pauseAfterTouch: 60 });
+  assert.deepEqual(rot({ pauseAfterTouch: -5 }), { enabled: true, pauseAfterTouch: 60 });
+  assert.deepEqual(rot({ pauseAfterTouch: 0 }), { enabled: true, pauseAfterTouch: 0 });
+  assert.deepEqual(rot({ enabled: 'false' }), { enabled: true, pauseAfterTouch: 60 });
+  assert.deepEqual(rot({ enabled: false }), { enabled: false, pauseAfterTouch: 60 });
+  assert.deepEqual(rot('nope'), { enabled: true, pauseAfterTouch: 60 });
+});
+
 test('short duration is clamped to 5 seconds', () => {
-  const { layout } = parseLayout(doc([{ id: 'p1', duration: 2, widgets: [] }]));
+  const { layout } = parseLayout(doc([{ id: 'p1', duration: 2, widgets: [widget()] }]));
   assert.equal(layout.pages[0].duration, 5);
 });
 
