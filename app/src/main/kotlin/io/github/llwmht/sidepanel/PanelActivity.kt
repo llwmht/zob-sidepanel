@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -85,6 +86,9 @@ class PanelActivity : Activity() {
         view.settings.domStorageEnabled = true
         view.settings.allowFileAccess = false
         view.settings.allowContentAccess = false
+        // Pages shown by the web-page widget live in frames of another origin; without third-party
+        // cookies, sites that keep a session in a cookie would log out (they work top-level in a browser).
+        CookieManager.getInstance().setAcceptThirdPartyCookies(view, true)
         val dispatcher = BridgeDispatcher(deviceHandlers(this))
         WebViewCompat.addWebMessageListener(view, "sidepanelNative", setOf(server.baseUrl)) { _, message, _, _, reply ->
             reply.postMessage(dispatcher.handle(message.data))
