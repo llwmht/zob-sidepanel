@@ -47,7 +47,7 @@ class EditorApiTest {
 
     @Test fun saveRejectsBadBodiesAndKeepsTheFile() {
         store.write(good)
-        for (bad in listOf("{{", "[]", """{"schema":2}""", "", null)) {
+        for (bad in listOf("{{", "[]", """{"schema":2}""", """{"schema":1}junk""", "", null)) {
             val r = api.handle("PUT", "/api/layout", bad)
             assertEquals(bad.toString(), 400, r.status)
             assertNotNull(JSONObject(r.json!!).getString("error"))

@@ -33,12 +33,24 @@ class PairingTest {
         assertNull(pairing.tryPair(if (code == "000000") "000001" else "000000"))
     }
 
-    @Test fun fiveWrongTriesRotateTheCode() {
+    @Test fun fiveWrongTriesLockPairingUntilANewCode() {
         val code = pairing.newCode()
         val wrong = if (code == "000000") "000001" else "000000"
         repeat(5) { pairing.tryPair(wrong) }
-        assertNotEquals(code, pairing.currentCode())
+        assertNull(pairing.currentCode())
+        assertTrue(pairing.isLocked())
         assertNull(pairing.tryPair(code))
+        val fresh = pairing.newCode()
+        assertFalse(pairing.isLocked())
+        assertNotNull(pairing.tryPair(fresh))
+    }
+
+    @Test fun wrongTriesCountAcrossRightPairings() {
+        val wrong = { c: String -> if (c == "000000") "000001" else "000000" }
+        repeat(4) { pairing.tryPair(wrong(pairing.currentCode() ?: pairing.newCode())) }
+        assertNotNull(pairing.tryPair(pairing.currentCode()!!))
+        pairing.tryPair(wrong(pairing.currentCode()!!))
+        assertTrue("a success must not reset the failure budget", pairing.isLocked())
     }
 
     @Test fun noCodeBeforeNewCodeOrAfterStop() {

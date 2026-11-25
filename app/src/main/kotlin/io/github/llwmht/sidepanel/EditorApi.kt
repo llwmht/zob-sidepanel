@@ -57,10 +57,17 @@ class EditorApi(
     }
 
     private fun withValidLayout(body: String?, action: (String) -> Unit): ApiResponse {
-        val doc = try { JSONObject(body ?: "") } catch (e: Exception) { return error(400, "layout is not a JSON object") }
+        val text = body?.trim() ?: ""
+        // Android's JSONObject ignores text after the first value; refuse it so only clean JSON is stored.
+        val doc = try { if (!text.endsWith("}")) null else JSONObject(text) } catch (e: Exception) { null }
+            ?: return error(400, "layout is not a JSON object")
         if (doc.opt("schema") != 1) return error(400, "unsupported layout schema")
-        action(body!!)
-        return ApiResponse(204)
+        return try {
+            action(text)
+            ApiResponse(204)
+        } catch (e: Exception) {
+            error(500, "could not save: " + (e.message ?: e.javaClass.simpleName))
+        }
     }
 
     private fun notAllowed() = error(405, "method not allowed")

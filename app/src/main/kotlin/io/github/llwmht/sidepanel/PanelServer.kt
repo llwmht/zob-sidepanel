@@ -48,7 +48,8 @@ class PanelServer(
     private fun serveApi(session: IHTTPSession, uri: String): Response {
         val api = api ?: return notFound()
         val length = session.headers["content-length"]?.toLongOrNull() ?: 0L
-        if (length > MAX_BODY) return text(413, "body too large")
+        // Pairing needs no session, so its body is capped small: unpaired peers cannot make the app allocate much.
+        if (length > (if (uri == "/api/pair") MAX_PAIR_BODY else MAX_BODY)) return text(413, "body too large")
         val body = if (length > 0) {
             val bytes = ByteArray(length.toInt())
             DataInputStream(session.inputStream).readFully(bytes)
@@ -95,6 +96,7 @@ class PanelServer(
 
     companion object {
         const val MAX_BODY = 1024L * 1024L
+        const val MAX_PAIR_BODY = 256L
     }
 }
 

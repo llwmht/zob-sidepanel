@@ -103,6 +103,17 @@ class PanelServerTest {
         assertEquals(413, status)
     }
 
+    @Test fun pairingBodyIsCappedSmall() {
+        server.stop()
+        server = PanelServer(source, 0, api = Api { _, _, _, _ -> ApiResponse(204) })
+        server.startOrError()
+        val status = Socket("127.0.0.1", server.listeningPort).use { s ->
+            s.getOutputStream().write("POST /api/pair HTTP/1.1\r\nHost: x\r\nContent-Length: 1000\r\n\r\n".toByteArray())
+            s.getInputStream().bufferedReader().readLine().split(" ")[1].toInt()
+        }
+        assertEquals(413, status)
+    }
+
     @Test fun deniedRequestsServeNothing() {
         server.stop()
         server = PanelServer(source, 0, access = { 403 })
