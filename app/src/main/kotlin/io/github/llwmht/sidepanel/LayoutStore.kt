@@ -15,6 +15,18 @@ class LayoutStore(private val dir: File) {
         }
     }
 
+    /** Replaces the layout. Written to a temporary file first so a crash never leaves half a file. */
+    @Synchronized fun write(text: String) {
+        dir.mkdirs()
+        val tmp = File(dir, "layout.json.tmp")
+        tmp.writeText(text)
+        val target = File(dir, "layout.json")
+        if (!tmp.renameTo(target)) {
+            target.delete()
+            if (!tmp.renameTo(target)) error("could not save the layout")
+        }
+    }
+
     companion object {
         const val MAX_BYTES = 1024 * 1024
     }
