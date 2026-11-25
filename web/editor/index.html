@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>zob-sidepanel editor</title>
+  <link rel="stylesheet" href="editor.css">
+  <link rel="stylesheet" href="../widgets/widgets.css">
+  <script type="module" src="editor.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>zob-sidepanel</h1>
+      <div class="tabs" id="tabs"></div>
+      <button id="add-page" type="button">+ Page</button>
+    </header>
+
+    <aside>
+      <h2>Page</h2>
+      <div class="field"><label for="duration">Shown for (seconds)</label><input id="duration" type="number" min="5" step="1"></div>
+      <div class="field" style="flex-direction:row;gap:6px">
+        <button id="page-left" type="button" title="Move page left">←</button>
+        <button id="page-right" type="button" title="Move page right">→</button>
+        <button id="remove-page" type="button">Remove page</button>
+      </div>
+      <h2>Rotation</h2>
+      <label class="field check"><input id="rotate" type="checkbox"> Rotate pages</label>
+      <div class="field"><label for="pause">Pause after a touch (seconds)</label><input id="pause" type="number" min="0" step="1"></div>
+      <h2>Add a widget</h2>
+      <div class="palette" id="palette"></div>
+    </aside>
+
+    <main><div class="stage" id="stage"></div></main>
+
+    <aside class="right" id="inspector"><p class="muted">Select a widget to change its settings.</p></aside>
+
+    <footer>
+      <button id="preview" type="button">Preview on device</button>
+      <button id="discard" type="button">Discard preview</button>
+      <button id="save" type="button" class="primary">Save</button>
+      <span id="status" class="muted"></span>
+    </footer>
+  </div>
+</body>
+</html>
