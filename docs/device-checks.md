@@ -54,3 +54,29 @@ Findings to handle later:
 - The swipe lock screen shows over the panel after boot (Fully Kiosk used to dismiss it). Planned for M4.
 - A package disabled with `pm disable-user` and enabled again stays in the "stopped" state and gets no
   boot broadcast until it is opened once by hand.
+
+## M2
+
+Run on 2026-11-25 (Shield K1, Android 7.0, WebView 101) with the owner's layout pushed by
+`device/push-layout.ps1`: page 1 = web-page widget with the owner's dashboard (120 s), page 2 =
+clock + weather + battery (30 s).
+
+1. [x] Page 1 shows the dashboard with live data inside the frame.
+   It keeps its own settings (theme, mode) apart from Fully Kiosk's; change them by tapping it.
+2. [x] After 120 s, page 2: clock ticking, weather with real values, battery equal to `dumpsys battery`.
+3. [x] After 30 s, back to page 1; the dashboard was not reloaded (it kept refreshing while hidden).
+4. [x] Swipe from the right edge goes to the next page.
+5. [x] Panel started with Wi-Fi off: "Weather unavailable" and the WebView error page in the frame.
+   Wi-Fi back on: weather recovers within the 2-minute retry, the dashboard frame reloads by itself.
+6. [x] Layout `{"schema":1,"pages":[]}` pushed: default layout plus the banner
+   "Layout ignored: layout has no pages. Showing the default layout."
+7. [x] Back opens the drawer; no exception from the app in logcat.
+8. [ ] Memory after 30 minutes of rotation: see the M2 pull request.
+9. [x] Fully Kiosk disabled, panel set as home, reboot: the tablet boots into the panel showing the dashboard
+   (after the swipe lock screen, until M4). Charge limiter still running.
+
+Found on the device and fixed in M2:
+- Android 7.0 does not trust ISRG Root X1, so Let's Encrypt sites (the dashboard, Open-Meteo) failed with
+  `net_error -202`. The app now adds ISRG Root X1 to its own trust anchors (network security config).
+- WebView does not follow connectivity on its own: the app now calls `setNetworkAvailable` from a
+  network callback, so the `online` event fires and widgets can recover.
