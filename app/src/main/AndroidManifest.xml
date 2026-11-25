@@ -38,5 +38,9 @@
         <activity
             android:name=".AppDrawerActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".EditorAccessActivity"
+            android:exported="false" />
     </application>
 </manifest>

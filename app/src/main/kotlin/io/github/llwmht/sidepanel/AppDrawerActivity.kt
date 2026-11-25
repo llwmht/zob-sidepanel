@@ -10,6 +10,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.Button
 import android.widget.GridView
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -63,6 +64,15 @@ class AppDrawerActivity : Activity() {
                 packageManager.getLaunchIntentForPackage(apps[position].pkg)?.let { startActivity(it) }
             }
         }
-        setContentView(grid)
+        val edit = Button(this).apply {
+            text = "Edit from another device"
+            setOnClickListener { startActivity(Intent(this@AppDrawerActivity, EditorAccessActivity::class.java)) }
+        }
+        setContentView(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundColor(Color.BLACK)
+            addView(edit, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+            addView(grid, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f))
+        })
     }
 }

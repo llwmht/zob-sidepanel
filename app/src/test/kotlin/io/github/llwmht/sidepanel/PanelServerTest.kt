@@ -111,7 +111,17 @@ class PanelServerTest {
         assertTrue(asked.isEmpty())
     }
 
-    @Test fun apiWithoutHandlerIs404() = assertEquals(404, get("/api/layout").responseCode)
+    @Test fun unpairedEditorPagesRedirectToPairing() {
+        server.stop()
+        server = PanelServer(source, 0, access = { 401 })
+        server.startOrError()
+        val c = get("/editor/")
+        assertEquals(302, c.responseCode)
+        assertEquals("/editor/pair.html", c.getHeaderField("Location"))
+        assertEquals(401, get("/api/layout").responseCode)
+    }
+
+    @Test fun apiWithoutHandlerIs404() =assertEquals(404, get("/api/layout").responseCode)
 
     @Test fun panelUrlMatchesOnlyExactOrigin() {
         assertTrue(isPanelUrl("http://127.0.0.1:8770/panel/", 8770))
