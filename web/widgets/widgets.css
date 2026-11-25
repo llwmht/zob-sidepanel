@@ -1,0 +1,14 @@
+/* Shared look for built-in widgets. Each widget fills its grid cell. */
+.w {
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0.6em 0.8em;
+  background: #111;
+  border-radius: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+.w-muted { color: #8a8a8a; }
+.w-big { font-weight: 200; font-variant-numeric: tabular-nums; line-height: 1; }

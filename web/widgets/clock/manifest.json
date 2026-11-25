@@ -1,0 +1,8 @@
+{
+  "name": "Clock",
+  "defaultSize": { "w": 8, "h": 5 },
+  "settings": {
+    "seconds": { "type": "boolean", "default": false, "label": "Show seconds" },
+    "date": { "type": "boolean", "default": true, "label": "Show the date" }
+  }
+}
