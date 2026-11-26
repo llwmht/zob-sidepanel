@@ -112,3 +112,19 @@ Run on 2026-11-26 (Shield K1, Android 7.0) with a browser on a PC on the same Wi
 Notes:
 - While the app is being updated (`adb install -r`), Android shows the stock launcher until Home is pressed.
 - The night script turns the screen off from 00:00 to 08:00, which also applies while testing.
+
+## M4
+
+Run on 2026-11-26 (Shield K1, Android 7.0).
+
+1. [x] The root `night.sh` was removed from `/data/adb/service.d`; the charge limiter still runs.
+2. [x] Reboot: the device shows the panel directly, no swipe lock screen (`mShowingLockscreen=false`).
+3. [x] Night "dim" with a 3-minute window: dark grey clock on black at brightness 1/255; a touch shows the panel at
+   system brightness; after the window the panel stays at system brightness.
+4. [x] Burn-in guard (read through WebView DevTools): `translate(2px, 1px)` → `(4px, 2px)` → `(2px, 4px)` every
+   2 minutes, on the panel and on the night clock.
+5. [x] First run after `pm clear`: the welcome screen (home app button, three templates); "Clock and weather" stores
+   that template and shows it ("Set a location" in the weather cell); first run is then marked done. The default
+   home setting survived `pm clear`.
+6. [ ] Night "off" with the device-administrator permission: screen off at the start, back on at the end.
+7. [ ] 48 hours unattended: dims at night, back in the morning, panel still responsive.
