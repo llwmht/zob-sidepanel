@@ -65,8 +65,8 @@ class AppDrawerActivity : Activity() {
             }
         }
         val edit = Button(this).apply {
-            text = "Edit from another device"
-            setOnClickListener { startActivity(Intent(this@AppDrawerActivity, EditorAccessActivity::class.java)) }
+            text = "Settings"
+            setOnClickListener { startActivity(Intent(this@AppDrawerActivity, SettingsActivity::class.java)) }
         }
         setContentView(LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL

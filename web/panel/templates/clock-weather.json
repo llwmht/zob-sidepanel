@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "name": "Clock and weather",
+  "pages": [
+    {
+      "id": "home",
+      "duration": 30,
+      "widgets": [
+        { "id": "clock", "type": "clock", "x": 0, "y": 0, "w": 8, "h": 6, "settings": { "seconds": false, "date": true } },
+        { "id": "weather", "type": "weather", "x": 8, "y": 0, "w": 4, "h": 6 },
+        { "id": "battery", "type": "battery", "x": 0, "y": 6, "w": 12, "h": 2 }
+      ]
+    }
+  ]
+}

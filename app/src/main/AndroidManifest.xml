@@ -44,6 +44,14 @@
         <activity
             android:name=".EditorAccessActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".FirstRunActivity"
+            android:exported="false" />
         <receiver
             android:name=".NightAlarmReceiver"
             android:exported="false" />

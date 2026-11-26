@@ -2,6 +2,7 @@ package io.github.llwmht.sidepanel
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.KeyguardManager
 import android.content.Intent
 import android.graphics.Color
 import android.net.ConnectivityManager
@@ -40,10 +41,30 @@ class PanelActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        showOverLockScreen()
+        if (FirstRunActivity.needed(this)) startActivity(Intent(this, FirstRunActivity::class.java))
         if (Build.VERSION.SDK_INT >= 33) {
             onBackInvokedDispatcher.registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_DEFAULT) { openDrawer() }
         }
         start()
+    }
+
+    /**
+     * The panel shows over the swipe lock screen and dismisses it, so a reboot or a night "off" does not
+     * leave the device waiting for a swipe. A PIN or pattern lock still asks for it.
+     */
+    @Suppress("DEPRECATION")
+    private fun showOverLockScreen() {
+        if (Build.VERSION.SDK_INT >= 27) {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+            getSystemService(KeyguardManager::class.java)?.requestDismissKeyguard(this, null)
+        } else {
+            window.addFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
+            )
+        }
     }
 
     private fun start() {

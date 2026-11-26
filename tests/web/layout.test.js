@@ -91,3 +91,12 @@ test('default layout parses', () => {
   const text = readFileSync(new URL('../../web/panel/default-layout.json', import.meta.url), 'utf8');
   assert.equal(parseLayout(text).error, null);
 });
+
+test('starter templates parse and have a name', () => {
+  for (const name of ['clock', 'clock-weather', 'web-page']) {
+    const text = readFileSync(new URL('../../web/panel/templates/' + name + '.json', import.meta.url), 'utf8');
+    const r = parseLayout(text);
+    assert.equal(r.error, null, name);
+    assert.equal(typeof r.layout.name, 'string', name);
+  }
+});
