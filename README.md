@@ -13,6 +13,12 @@ small agent on your PC for hardware stats and macro buttons.
 - Widgets are plain HTML and JavaScript.
 - Layouts are edited from a browser on another device.
 
+## Install a release
+
+Download `zob-sidepanel-vX.Y.Z.apk` from the [releases](https://github.com/llwmht/zob-sidepanel/releases),
+allow installing apps from your browser or file manager, and open it. The first run asks you to make it the
+home screen and to pick a starting layout. Android 7.0 or newer.
+
 ## Try it (developers)
 
 Needs JDK 17+ and the Android SDK. Build and install the debug APK on a device with USB debugging:
