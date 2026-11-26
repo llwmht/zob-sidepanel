@@ -137,6 +137,12 @@ function drawTabs() {
     tabs.appendChild(b);
   });
   $('duration').value = currentPage().duration;
+  const n = state.layout.settings.night;
+  $('night-on').checked = n.enabled;
+  $('night-from').value = n.from;
+  $('night-to').value = n.to;
+  $('night-mode').value = n.mode;
+  $('burn-in').checked = state.layout.settings.burnInGuard;
   $('rotate').checked = state.layout.rotation.enabled;
   $('pause').value = state.layout.rotation.pauseAfterTouch;
 }
@@ -243,6 +249,12 @@ function wireControls() {
   $('duration').addEventListener('change', (e) => { currentPage().duration = Math.max(5, Number(e.target.value) || 30); drawTabs(); });
   $('rotate').addEventListener('change', (e) => { state.layout.rotation.enabled = e.target.checked; });
   $('pause').addEventListener('change', (e) => { state.layout.rotation.pauseAfterTouch = Math.max(0, Number(e.target.value) || 0); });
+  const night = () => state.layout.settings.night;
+  $('night-on').addEventListener('change', (e) => { night().enabled = e.target.checked; });
+  $('night-from').addEventListener('change', (e) => { if (e.target.value) night().from = e.target.value; });
+  $('night-to').addEventListener('change', (e) => { if (e.target.value) night().to = e.target.value; });
+  $('night-mode').addEventListener('change', (e) => { night().mode = e.target.value; });
+  $('burn-in').addEventListener('change', (e) => { state.layout.settings.burnInGuard = e.target.checked; });
   $('preview').addEventListener('click', () => send('PUT', '/api/preview', 'Previewing on the device (not saved).'));
   $('discard').addEventListener('click', () => send('DELETE', '/api/preview', 'Preview discarded.'));
   $('save').addEventListener('click', () => send('PUT', '/api/layout', 'Saved.'));

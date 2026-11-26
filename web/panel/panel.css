@@ -64,3 +64,9 @@ html, body {
   color: #fff;
   font-size: 2vmin;
 }
+
+/* Night: dimmed black clock above everything; a touch shows the panel for a minute. */
+#night { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 30; background: #000; display: flex; align-items: center; justify-content: center; }
+#night[hidden] { display: none; }
+#night-clock { color: #2e2e2e; font-size: 24vmin; font-weight: 200; font-variant-numeric: tabular-nums; }
+#pages, #night-clock { transition: transform 2s; }

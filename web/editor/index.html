@@ -27,6 +27,19 @@
       <h2>Rotation</h2>
       <label class="field check"><input id="rotate" type="checkbox"> Rotate pages</label>
       <div class="field"><label for="pause">Pause after a touch (seconds)</label><input id="pause" type="number" min="0" step="1"></div>
+      <h2>Night</h2>
+      <label class="field check"><input id="night-on" type="checkbox"> Night mode</label>
+      <div class="field" style="flex-direction:row;gap:6px">
+        <label class="field" style="flex:1">From<input id="night-from" type="time"></label>
+        <label class="field" style="flex:1">To<input id="night-to" type="time"></label>
+      </div>
+      <div class="field"><label for="night-mode">At night</label>
+        <select id="night-mode">
+          <option value="dim">Dimmed clock</option>
+          <option value="off">Screen off (allow it on the device: Settings)</option>
+        </select>
+      </div>
+      <label class="field check"><input id="burn-in" type="checkbox"> Burn-in guard (shift a few pixels)</label>
       <h2>Add a widget</h2>
       <div class="palette" id="palette"></div>
     </aside>

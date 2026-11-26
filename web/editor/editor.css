@@ -41,3 +41,4 @@ footer { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; padd
 .overlay .grip { position: absolute; right: -6px; bottom: -6px; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); cursor: nwse-resize; touch-action: none; }
 .guides { pointer-events: none; }
 .guides div { border: 1px solid rgba(255,255,255,.04); border-radius: 6px; }
+select, input[type=time] { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; width: 100%; }
