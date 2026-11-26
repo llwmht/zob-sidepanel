@@ -45,8 +45,6 @@ class NightController(private val context: Context) {
 
     fun adminComponent(): ComponentName = admin
 
-    /** True when "off" mode is chosen but cannot work, so the panel should dim instead. */
-    fun offUnavailable(): Boolean = mode == "off" && !canTurnScreenOff()
 
     /** Sets the alarm for the next change; called after a change, at app start and after each alarm. */
     fun reschedule() {
@@ -63,10 +61,12 @@ class NightController(private val context: Context) {
         }
     }
 
-    /** At app start: in "off" mode during the night (for example after a reboot), turn the screen off again. */
-    fun applyNow() {
+    /**
+     * Called by the panel when it dims for the night. In "off" mode this turns the screen off; the panel only
+     * dims after a minute without touches, so this never happens while someone is using the device.
+     */
+    fun screenOffIfNight() {
         if (enabled && mode == "off" && schedule.isNight(System.currentTimeMillis())) turnScreenOff()
-        reschedule()
     }
 
     fun onAlarm(nightStarts: Boolean) {

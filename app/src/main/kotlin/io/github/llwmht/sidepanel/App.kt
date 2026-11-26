@@ -64,7 +64,7 @@ class App : Application() {
             Process.killProcess(Process.myPid())
         }
         night = NightController(this)
-        night.applyNow()
+        night.reschedule()
         startServer()
     }
 

@@ -42,5 +42,5 @@ A message that is not JSON or has no `id` or `method` gets `{"id": null, "error"
 | `launchApp` | `{package: string}` | boolean (false when the package has no launch intent) |
 | `openDrawer` | – | null |
 | `setNight` | `{enabled: boolean, from: "HH:MM", to: "HH:MM", mode: "dim" or "off"}` | null; the app keeps the schedule and, in "off" mode, turns the screen off and on |
-| `canTurnScreenOff` | – | boolean: whether the owner allowed the app to turn the screen off |
+| `nightScreenOff` | – | null; in "off" night mode, during the night and with the owner's permission, turns the screen off |
 | `getLayout` | – | string: the unsaved preview from the editor if there is one, else `layout.json` from app storage; null when there is none |

@@ -42,7 +42,6 @@ class PanelActivity : Activity() {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         showOverLockScreen()
-        if (FirstRunActivity.needed(this)) startActivity(Intent(this, FirstRunActivity::class.java))
         if (Build.VERSION.SDK_INT >= 33) {
             onBackInvokedDispatcher.registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_DEFAULT) { openDrawer() }
         }
@@ -58,7 +57,6 @@ class PanelActivity : Activity() {
         if (Build.VERSION.SDK_INT >= 27) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
-            getSystemService(KeyguardManager::class.java)?.requestDismissKeyguard(this, null)
         } else {
             window.addFlags(
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
@@ -209,6 +207,15 @@ class PanelActivity : Activity() {
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Every time, not only at creation: the activity is singleTask, so after a night "off" or a trip to the
+        // home-app settings it comes back through onResume. API 27+ needs the dismiss request each time
+        // (below, the window flag set at creation keeps working).
+        if (Build.VERSION.SDK_INT >= 27) getSystemService(KeyguardManager::class.java)?.requestDismissKeyguard(this, null)
+        if (FirstRunActivity.needed(this)) startActivity(Intent(this, FirstRunActivity::class.java))
     }
 
     override fun onDestroy() {

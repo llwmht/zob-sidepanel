@@ -62,11 +62,22 @@ class SettingsActivity : Activity() {
                 }
             })
             addView(adminState)
+            addView(Button(context).apply {
+                text = "Stop allowing (needed before uninstalling)"
+                setOnClickListener {
+                    getSystemService(DevicePolicyManager::class.java)?.removeActiveAdmin(app.night.adminComponent())
+                    adminState.postDelayed({ showAdminState() }, 500)
+                }
+            })
         })
     }
 
     override fun onResume() {
         super.onResume()
+        showAdminState()
+    }
+
+    private fun showAdminState() {
         adminState.text = if (app.night.canTurnScreenOff()) "Allowed." else "Not allowed."
     }
 }
