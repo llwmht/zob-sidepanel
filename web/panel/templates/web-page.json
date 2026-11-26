@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "name": "Web dashboard",
+  "pages": [
+    {
+      "id": "dashboard",
+      "duration": 120,
+      "widgets": [ { "id": "page", "type": "web-page", "x": 0, "y": 0, "w": 12, "h": 8 } ]
+    },
+    {
+      "id": "home",
+      "duration": 30,
+      "widgets": [
+        { "id": "clock", "type": "clock", "x": 0, "y": 0, "w": 12, "h": 6 },
+        { "id": "battery", "type": "battery", "x": 0, "y": 6, "w": 12, "h": 2 }
+      ]
+    }
+  ]
+}
