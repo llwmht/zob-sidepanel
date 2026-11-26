@@ -51,5 +51,5 @@ fun deviceHandlers(a: PanelActivity): Map<String, (JSONObject) -> Any?> = mapOf(
         (a.application as App).night.set(p.optBoolean("enabled"), p.optString("from"), p.optString("to"), p.optString("mode"))
         null
     },
-    "canTurnScreenOff" to { _ -> (a.application as App).night.canTurnScreenOff() },
+    "nightScreenOff" to { _ -> (a.application as App).night.screenOffIfNight(); null },
 )

@@ -89,19 +89,26 @@ function wireNight(night) {
   bridge.call('setNight', night).catch(() => { /* outside the app: dim only */ });
   const overlay = document.getElementById('night');
   const clock = document.getElementById('night-clock');
-  let awakeUntil = 0;
-  let dimmed = false;
+  const nightNow = () => night.enabled && isNight(new Date(), night.from, night.to);
+  // A panel (re)started at night stays awake for a minute first: after a reboot, a crash or a reload while
+  // someone is using the device, the screen must not dim or turn off under their finger.
+  let awakeUntil = Date.now() + AWAKE_MS;
+  // null: the first update always sets the brightness, so a reload during the night cannot leave it at 1/255.
+  let dimmed = null;
   const update = () => {
     const now = new Date();
-    const want = night.enabled && isNight(now, night.from, night.to) && Date.now() >= awakeUntil;
+    const want = nightNow() && Date.now() >= awakeUntil;
     if (want !== dimmed) {
       dimmed = want;
       overlay.hidden = !want;
       bridge.call('setBrightness', { level: want ? 1 : -1 }).catch(() => {});
+      // In "off" mode the app also turns the screen off (it checks the mode and its permission itself).
+      if (want) bridge.call('nightScreenOff').catch(() => {});
     }
     if (want) clock.textContent = pad(now.getHours()) + ':' + pad(now.getMinutes());
   };
-  const wake = () => { if (dimmed) { awakeUntil = Date.now() + AWAKE_MS; update(); } };
+  // Any touch during the night keeps the panel awake for another minute.
+  const wake = () => { if (nightNow()) { awakeUntil = Date.now() + AWAKE_MS; update(); } };
   document.addEventListener('pointerdown', wake);
   window.addEventListener('sidepanel:touch', wake);
   update();

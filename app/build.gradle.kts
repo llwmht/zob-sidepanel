@@ -4,7 +4,7 @@ plugins {
 
 // Release signing comes from the environment (CI secrets, or the owner's shell); without it the release
 // build is unsigned. Nothing secret lives in the repository.
-val releaseKeystore: String? = System.getenv("SIDEPANEL_KEYSTORE")
+val releaseKeystore: String? = System.getenv("SIDEPANEL_KEYSTORE")?.takeUnless { it.isBlank() }
 
 android {
     namespace = "io.github.llwmht.sidepanel"
