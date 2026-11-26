@@ -126,5 +126,9 @@ Run on 2026-11-26 (Shield K1, Android 7.0).
 5. [x] First run after `pm clear`: the welcome screen (home app button, three templates); "Clock and weather" stores
    that template and shows it ("Set a location" in the weather cell); first run is then marked done. The default
    home setting survived `pm clear`.
-6. [ ] Night "off" with the device-administrator permission: screen off at the start, back on at the end.
+6. [x] Night "off" with the device-administrator permission (`dpm set-active-admin`), 3-minute window: screen off at
+   the start ("device administration policy"), stays off, back on at the end (woken by the app) with the panel in
+   front at system brightness and no lock screen. Found here: the "turn screen on" window flag woke the screen 4 s
+   after the lock, when the night dimming changed the window brightness; the flag was removed. A day-time sleep
+   stayed off for 100 s across charge-limiter cycles, so the limiter does not wake the screen.
 7. [ ] 48 hours unattended: dims at night, back in the morning, panel still responsive.
