@@ -1,6 +1,8 @@
 // Layout document: { schema: 1, rotation: {enabled, pauseAfterTouch}, pages: [{id, duration, widgets: [...]}] }.
 // A widget is { id, type, x, y, w, h, settings } on a 12 x 8 grid. See docs/PLAN.md, section 5.
 
+import { parseTime } from './night.js';
+
 export const GRID = { cols: 12, rows: 8 };
 
 const MIN_DURATION = 5;
@@ -51,5 +53,21 @@ export function parseLayout(text) {
       widgets: widgets.map((w) => Object.assign({}, w, { settings: w.settings || {} })),
     }));
   }
-  return { layout: Object.assign({}, doc, { rotation, pages }), error: null };
+  return { layout: Object.assign({}, doc, { rotation, pages, settings: parseSettings(doc.settings) }), error: null };
+}
+
+/** Device settings; anything malformed falls back to its default instead of rejecting the layout. */
+function parseSettings(s) {
+  const src = s && typeof s === 'object' ? s : {};
+  const n = src.night && typeof src.night === 'object' ? src.night : {};
+  const time = (v, d) => (parseTime(v) === null ? d : v);
+  return {
+    night: {
+      enabled: n.enabled === true,
+      from: time(n.from, '00:00'),
+      to: time(n.to, '08:00'),
+      mode: n.mode === 'off' ? 'off' : 'dim',
+    },
+    burnInGuard: src.burnInGuard !== false,
+  };
 }
