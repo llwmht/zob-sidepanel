@@ -6,7 +6,7 @@ The `.sh` scripts run as root on the tablet; the `.ps1` scripts run on a Windows
 | Script | Where it runs | What it does |
 |---|---|---|
 | `charge-limit.sh` | tablet, `/data/adb/service.d/` | Keeps the battery between 55 % and 60 % by toggling the charger. |
-| `night.sh` | tablet, `/data/adb/service.d/` | Turns the screen off at 00:00 and back on at 08:00. |
+| `night.sh` | (superseded) | Turned the screen off at 00:00 and back on at 08:00. The app now has its own night mode (M4); do not install both. |
 | `check.sh` | tablet, run by hand | Reports whether the limiter runs, the switch state and six current samples. |
 | `black-wallpaper.sh` | tablet, run by hand, then reboot | Installs `/data/local/tmp/black.png` as the wallpaper. |
 | `shield-dashboard.ps1` | PC | Safe tweaks (animations off, stay awake while charging), lists and disables bloat, `-Restore` undoes it. |
