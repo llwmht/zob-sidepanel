@@ -52,16 +52,14 @@ class PanelActivity : Activity() {
      * The panel shows over the swipe lock screen and dismisses it, so a reboot or a night "off" does not
      * leave the device waiting for a swipe. A PIN or pattern lock still asks for it.
      */
+    // No "turn screen on" flag: with it, any window change while asleep (the night dimming sets the brightness)
+    // wakes the screen right after a night "off" lock. The morning wake uses its own wake lock.
     @Suppress("DEPRECATION")
     private fun showOverLockScreen() {
         if (Build.VERSION.SDK_INT >= 27) {
             setShowWhenLocked(true)
-            setTurnScreenOn(true)
         } else {
-            window.addFlags(
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
-                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
-            )
+            window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD)
         }
     }
 
