@@ -47,4 +47,9 @@ fun deviceHandlers(a: PanelActivity): Map<String, (JSONObject) -> Any?> = mapOf(
     },
     "openDrawer" to { _ -> a.openDrawer(); null },
     "getLayout" to { _ -> (a.application as App).editorApi.currentLayout() },
+    "setNight" to { p ->
+        (a.application as App).night.set(p.optBoolean("enabled"), p.optString("from"), p.optString("to"), p.optString("mode"))
+        null
+    },
+    "canTurnScreenOff" to { _ -> (a.application as App).night.canTurnScreenOff() },
 )
