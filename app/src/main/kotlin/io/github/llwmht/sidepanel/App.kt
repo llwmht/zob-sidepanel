@@ -17,6 +17,8 @@ class App : Application() {
         private set
     lateinit var editorApi: EditorApi
         private set
+    lateinit var night: NightController
+        private set
     var server: PanelServer? = null
         private set
 
@@ -61,6 +63,8 @@ class App : Application() {
             Log.e(TAG, "uncaught exception, ending process", e)
             Process.killProcess(Process.myPid())
         }
+        night = NightController(this)
+        night.applyNow()
         startServer()
     }
 
